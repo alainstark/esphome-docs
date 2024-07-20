@@ -4,9 +4,9 @@ Wide 1-Wire Temperature Sensors Reliable Network
 .. seo::
     :description: Instructions for setting up a wide and reliable
       temperature sensors network. For this we use components of the
-      familly ds248x like ds2482-100 or ds2482-800 that are single channel ou octo channels 1-Wire Master interface
+      familly DS248x like DS2482-100 or DS2484 that are single channel or ds2482-800 octo channels 1-Wire Master interface
       chips over I²C.
-    :keywords: ds2484 ds2482-100, ds2482-800, ds18b20, onewire
+    :keywords: ds2482-100, ds2482-800, ds2484, ds18b20, onewire
 
 .. _ds248x-component:
 
@@ -18,12 +18,12 @@ wide and reliable 1-Wire temperature sensors network.
 
 It controls chips of the ds248x familly like :
 
-- `ds2484 <https://www.tindie.com/products/closedcube/ds2484-i2c-to-1-channel-onewire-master-breakout/>`__
-  (`datasheet <https://www.analog.com/media/en/technical-documentation/data-sheets/DS2484.pdf>`__)
-- `ds2482-100 <https://www.artekit.eu/products/breakout-boards/io/ak-ds2482s-100/>`__
+- `DS2482-100 Single-Channel 1-Wire Master <https://www.artekit.eu/products/breakout-boards/io/ak-ds2482s-100/>`__
   (`datasheet <https://www.analog.com/media/en/technical-documentation/data-sheets/DS2482-100.pdf>`__)
-- `ds2482-800 <https://www.tindie.com/products/closedcube/ds2482-800-i2c-to-8-channel-1-wire-breakout-board/>`__
+- `DS2482-800 8-Channel 1-Wire Master <https://www.tindie.com/products/closedcube/ds2482-800-i2c-to-8-channel-1-wire-breakout-board/>`__
   (`datasheet <https://www.analog.com/media/en/technical-documentation/data-sheets/ds2482-800.pdf>`__)
+- `DS2484 Single-Channel 1-Wire Master <https://www.tindie.com/products/closedcube/ds2484-i2c-to-1-channel-onewire-master-breakout/>`__
+  (`datasheet <https://www.analog.com/media/en/technical-documentation/data-sheets/DS2484.pdf>`__)
 
 
 To build a large and reliable 1-Wire network, a certain number of constraints must be respected.
@@ -38,9 +38,9 @@ My advice is as follows :
 - Use 5V vcc to power the 1-Wire components.
 - Use a Master 1-Wire component to fine control timings on the 1-Wire buses.
 
-If you cannot use a linear network topology, consider user ds2482-800, so you have height 1-Wire buses to build a star + linear network topology.
+If you cannot use a linear network topology, consider user DS2482-800, so you have height 1-Wire buses to build a star + linear network topology.
 
-If you dont use ds2484, use a level translator like
+If you dont use DS2484, use a level translator like
 `pca9306 <https://www.dhm-online.com/fr/sparkfun/3084-sparkfun-level-translator-breakout-pca9306.html>`__
 (`datasheet <https://www.ti.com/lit/ds/symlink/pca9306.pdf>`__).
 
@@ -62,10 +62,28 @@ Configure the component:
 
 .. code-block:: yaml
 
-    # ds2482-800
+    # DS2482-100 Single-Channel 1-Wire Master
+    ds248x:
+        type: ds2482-100
+        address: 0x18
+        active_pullup: true
+        strong_pullup: false
+        bus_sleep: false
+        update_interval: 10s
+
+    # DS2482-800 8-Channel 1-Wire Master
     ds248x:
         type: ds2482-800
-        address: 0x1f
+        address: 0x18
+        active_pullup: true
+        strong_pullup: false
+        bus_sleep: false
+        update_interval: 10s
+
+    # DS2484 Single-Channel 1-Wire Master
+    ds248x:
+        type: ds2484
+        address: 0x18
         active_pullup: true
         strong_pullup: false
         bus_sleep: false
@@ -74,7 +92,7 @@ Configure the component:
 Configuration variables:
 ************************
 
-- **type** (**Required**, enum): Can be ``ds2482-100`` or ``ds2482-800``.
+- **type** (**Required**, enum): Can be ``ds2482-100``, ``ds2482-800`` or ``ds2484``.
 - **address** (*Optional*, int): Manually specify the I²C address of the component.
   Defaults to ``0x18``.
 - **sleep_pin** (*Optional*, :ref:`Pin <config-pin>`): ``ds2484`` support Power-Saving Sleep Mode (SLPZ Pin).
@@ -97,7 +115,7 @@ Sensors
 
 .. _ds248x-sensor:
 
-The ``ds248x`` hub allows you to use DS18B20 and similar sensors.
+The ``ds248x`` hub allows you to use [DS18B20](https://www.analog.com/en/products/ds18b20.html) and similar sensors.
 
 To initialize a sensor, first supply either ``address`` **or** ``index`` to identify the sensor.
 
@@ -160,7 +178,7 @@ the scanning will happen even with no sensors connected. For example with this c
     # Example without sensors
     ds248x:
         type: ds2482-800
-        address: 0x1f
+        address: 0x18
         active_pullup: true
         strong_pullup: false
         bus_sleep: false
@@ -179,7 +197,7 @@ Now we can add the individual sensors to our configuration:
     # Example with 2 sensors from the previous list
     ds248x:
         type: ds2482-800
-        address: 0x1f
+        address: 0x18
         active_pullup: true
         strong_pullup: false
         bus_sleep: false
